@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Redirige les requêtes vers les pages PHP correspondantes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
