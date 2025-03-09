@@ -279,3 +279,23 @@ input[readonly] {
 .notification-error {
     background-color: #dc3545;
 }
+
+/* Code Mempool */
+.pagination {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+}
+
+.pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
