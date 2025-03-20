@@ -1,41 +1,35 @@
 <?php include '../include/header.php'; ?>
 
-<div class="wallet-container">
-    <h1>Bitcoin Wallet</h1>
-    
-    <div class="wallet-form">
-        <h2>Créer votre wallet</h2>
-        <form id="wallet-form">
-            <div class="form-group">
-                <label for="wallet-id">Nom du wallet:</label>
-                <input type="text" id="wallet-id" required placeholder="Entrez un nom unique">
-            </div>
-            <div class="form-group">
-                <button type="button" id="generate-keys" class="btn btn-secondary">Générer les clés</button>
-            </div>
-            <div class="form-group">
-                <label for="wallet-public-key">Clé publique:</label>
-                <div class="key-container">
-                    <input type="text" id="wallet-public-key" readonly>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="wallet-private-key">Clé privée:</label>
-                <div class="key-container">
-                    <input type="text" id="wallet-private-key" readonly>
-                </div>
-            </div>
-            <div class="wallet-balance">
-                <h3>Solde</h3>
-                <div class="balance">
-                    <span id="balance-amount">0.00000000</span> BTC
-                </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Sauvegarder</button>
-            </div>
-        </form>
-    </div>
+<div class="container">
+    <h2>Inscription Wallet</h2>
+    <button id="generate-keys">Générer les clés</button>
+    <form id="walletForm">
+        <div class="form-group">
+            <label for="wallet-id">Nom du Wallet :</label>
+            <input type="text" id="wallet-id" name="walletName" required placeholder="Entrez un nom unique">
+        </div>
+        
+        <div class="form-group">
+            <label for="wallet-public-key">Clé publique :</label>
+            <input type="text" id="wallet-public-key" name="publicKey" readonly>
+            <span id="wallet-public-key-display" hidden></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="wallet-private-key">Clé privée :</label>
+            <input type="text" id="wallet-private-key" name="privateKey" readonly>
+            <span id="wallet-private-key-display" hidden></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="balance">Solde (BTC) :</label>
+            <input type="text" id="balance-amount" name="balance" value="0.00000000 BTC" readonly>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">S'inscrire</button>
+        </div>
+    </form>
 </div>
 
 <?php include '../include/footer.php'; ?>

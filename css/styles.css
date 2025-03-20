@@ -280,22 +280,80 @@ input[readonly] {
     background-color: #dc3545;
 }
 
-/* Code Mempool */
-.pagination {
-    text-align: center;
-    margin-top: 10px;
+/* Code Wallet List & Mempool */
+
+/* Wrapper du tableau */
+.listTable-wrapper {
+    width: 100%;
+    /* Le tableau prend toute la largeur de l'écran */
+    max-width: 100%;
+    /* Il ne dépassera pas la largeur de l'écran */
+    overflow: hidden;
+    /* Pas de défilement */
 }
 
-.pagination button {
-    padding: 5px 10px;
-    margin: 2px;
-    border: none;
-    cursor: pointer;
-    background: #007bff;
+/* Style du tableau avec la classe .listTable */
+.listTable {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des en-têtes de colonne */
+.listTable thead {
+    background-color: #007bff;
     color: white;
 }
 
-.pagination button:disabled {
-    background: #ccc;
+.listTable th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* Style des cellules du tableau */
+.listTable td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Style du survol des lignes */
+.listTable td:hover {
+    background-color: #f1f1f1;
+}
+
+/* Style pour les boutons de pagination */
+#pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pagination button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#pagination button:hover {
+    background-color: #0056b3;
+}
+
+#pagination button:disabled {
+    background-color: #cccccc;
     cursor: not-allowed;
+}
+
+/* Style pour l'affichage de la page courante */
+#pageInfo {
+    margin: 0 10px;
+    font-size: 1.1em;
+    color: #333;
 }

@@ -1,121 +1,49 @@
 <?php
-// Définir l'en-tête pour JSON
 header('Content-Type: application/json');
+require_once("connexion.php");
 
-// Configuration de la base de données
-$dbFile = __DIR__ . '/../data/wallets.json';
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Vérifier que les données arrivent
+    // Liste des champs à vérifier
+    $requiredFields = ["walletName", "publicKey", "privateKey"];
+    $missingFields = [];
 
-// Fonction d'initialisation de la base de données si elle n'existe pas
-function initDatabase() {
-    global $dbFile;
-    
-    $dir = dirname($dbFile);
-    if (!file_exists($dir)) {
-        mkdir($dir, 0755, true);
-    }
-    
-    if (!file_exists($dbFile)) {
-        file_put_contents($dbFile, json_encode([]));
-    }
-}
-
-// Fonction pour lire tous les wallets
-function readWallets() {
-    global $dbFile;
-    
-    initDatabase();
-    $content = file_get_contents($dbFile);
-    return json_decode($content, true) ?: [];
-}
-
-// Fonction pour écrire tous les wallets
-function writeWallets($wallets) {
-    global $dbFile;
-    
-    initDatabase();
-    file_put_contents($dbFile, json_encode($wallets, JSON_PRETTY_PRINT));
-}
-
-// Fonction pour obtenir un wallet spécifique
-function getWallet($id) {
-    $wallets = readWallets();
-    return isset($wallets[$id]) ? $wallets[$id] : null;
-}
-
-// Fonction pour sauvegarder un wallet
-function saveWallet($id, $publicKey, $privateKey, $balance = 0) {
-    $wallets = readWallets();
-    
-    $wallets[$id] = [
-        'id' => $id,
-        'public_key' => $publicKey,
-        'private_key' => $privateKey,
-        'balance' => (float)$balance,
-        'created_at' => isset($wallets[$id]['created_at']) ? $wallets[$id]['created_at'] : date('Y-m-d H:i:s'),
-        'updated_at' => date('Y-m-d H:i:s')
-    ];
-    
-    writeWallets($wallets);
-    return true;
-}
-
-// Traitement des actions
-$action = isset($_GET['action']) ? $_GET['action'] : '';
-
-switch ($action) {
-    case 'check_wallet':
-        $id = isset($_GET['id']) ? $_GET['id'] : '';
-        $exists = getWallet($id) !== null;
-        
-        echo json_encode([
-            'success' => true,
-            'exists' => $exists
-        ]);
-        break;
-        
-    case 'get_wallet':
-        $id = isset($_GET['id']) ? $_GET['id'] : '';
-        $wallet = getWallet($id);
-        
-        if ($wallet) {
-            echo json_encode([
-                'success' => true,
-                'wallet' => $wallet
-            ]);
-        } else {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Wallet non trouvé'
-            ]);
+    // Vérification de chaque champ
+    foreach ($requiredFields as $field) {
+        if (empty($_POST[$field])) {
+            $missingFields[] = $field;
         }
-        break;
-        
-    case 'save_wallet':
-        $id = isset($_POST['id']) ? $_POST['id'] : '';
-        $publicKey = isset($_POST['public_key']) ? $_POST['public_key'] : '';
-        $privateKey = isset($_POST['private_key']) ? $_POST['private_key'] : '';
-        $balance = isset($_POST['balance']) ? (float)$_POST['balance'] : 0;
-        
-        if (empty($id) || empty($publicKey) || empty($privateKey)) {
-            echo json_encode([
-                'success' => false,
-                'message' => 'Tous les champs sont obligatoires'
-            ]);
-            break;
-        }
-        
-        saveWallet($id, $publicKey, $privateKey, $balance);
-        
+    }
+
+    // Si des champs sont manquants, renvoyer l'erreur
+    if ($missingFields) {
         echo json_encode([
-            'success' => true,
-            'message' => 'Wallet sauvegardé avec succès'
+            "success" => false,
+            "message" => "Données manquantes pour : " . implode(", ", $missingFields)
         ]);
-        break;
-        
-    default:
-        echo json_encode([
-            'success' => false,
-            'message' => 'Action non reconnue'
-        ]);
-        break;
+        exit;
+    }
+
+    // Récupérer les données
+    $walletName = trim($_POST["walletName"]);
+    $publicKey = trim($_POST["publicKey"]);
+    $privateKey = trim($_POST["privateKey"]);
+    $balance = "0.00000000";  // Solde par défaut
+
+    // Vérification si le wallet existe déjà
+    $stmt = $pdo->prepare("SELECT id_wallet FROM wallets WHERE nom_wallet = ?");
+    $stmt->execute([$walletName]);
+    if ($stmt->fetch()) {
+        echo json_encode(["success" => false, "message" => "Ce nom de wallet existe déjà."]);
+        exit;
+    }
+
+    // Insérer le wallet dans la base de données
+    $stmt = $pdo->prepare("INSERT INTO wallets (nom_wallet, publicKey_wallet, privateKey_wallet, amount_wallet) VALUES (?, ?, ?, ?)");
+    if ($stmt->execute([$walletName, $publicKey, $privateKey, $balance])) {
+        echo json_encode(["success" => true, "message" => "Inscription réussie !"]);
+    } else {
+        echo json_encode(["success" => false, "message" => "Erreur lors de l'inscription."]);
+    }
 }
+?>

@@ -107,225 +107,148 @@ function decryptMessage() {
     });
 }
 
-/* Code Wallet - n'est exécuté que si les éléments existent */
-document.addEventListener('DOMContentLoaded', function () {
-    // Gestionnaires d'événements pour la page wallet uniquement
-    if (document.getElementById('generate-keys')) {
-        document.getElementById('generate-keys').addEventListener('click', generateKeys);
+/* Code Wallet */
+document.addEventListener("DOMContentLoaded", function () {
+    const generateKeysBtn = document.getElementById("generate-keys");
+    const walletForm = document.getElementById("walletForm");
+    const submitBtn = walletForm.querySelector('button[type="submit"]');
+
+    let publicKey, privateKey;
+
+    // Fonction pour générer les clés
+    async function generateKeys() {
+        try {
+            // Désactiver le bouton de soumission tant que les clés ne sont pas générées
+            submitBtn.disabled = true;
+
+            // Génération des clés ECDSA
+            const keyPair = await window.crypto.subtle.generateKey(
+                {
+                    name: "ECDSA",
+                    namedCurve: "P-256"
+                },
+                true,
+                ["sign", "verify"]
+            );
+
+            // Assigner les clés générées à des variables
+            publicKey = keyPair.publicKey;
+            privateKey = keyPair.privateKey;
+
+            // Convertir les clés en format PEM (Base64)
+            const publicKeyPEM = await keyToPEM(publicKey, "spki");
+            const privateKeyPEM = await keyToPEM(privateKey, "pkcs8");
+
+            // Afficher les clés dans les champs de texte du formulaire
+            document.getElementById("wallet-public-key").value = publicKeyPEM;
+            document.getElementById("wallet-private-key").value = privateKeyPEM;
+
+            // Réactiver le bouton de soumission après génération des clés
+            submitBtn.disabled = false;
+        } catch (error) {
+            console.error("Erreur lors de la génération des clés :", error);
+        }
     }
 
-    if (document.getElementById('copy-public-key')) {
-        document.getElementById('copy-public-key').addEventListener('click', function () {
-            copyToClipboard('wallet-public-key');
-        });
+    // Fonction pour convertir une clé en format PEM
+    async function keyToPEM(key, type) {
+        const exportedKey = await window.crypto.subtle.exportKey(type, key);
+        return btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
     }
 
-    if (document.getElementById('copy-private-key')) {
-        document.getElementById('copy-private-key').addEventListener('click', function () {
-            copyToClipboard('wallet-private-key');
-        });
-    }
+    // Ajouter l'événement sur le bouton de génération des clés
+    generateKeysBtn.addEventListener("click", generateKeys);
 
-    // Gestionnaire pour le formulaire de wallet
-    if (document.getElementById('wallet-form')) {
-        document.getElementById('wallet-form').addEventListener('submit', saveWallet);
-    }
+    // Gestion de la soumission du formulaire
+    walletForm.addEventListener("submit", async function (event) {
+        event.preventDefault();  // Empêche la soumission classique du formulaire
 
-    // Vérifier si un ID est déjà saisi et charger les données (page wallet uniquement)
-    if (document.getElementById('wallet-id')) {
-        document.getElementById('wallet-id').addEventListener('blur', checkWalletId);
-    }
+        const walletId = document.getElementById("wallet-id").value.trim();
+        const publicKey = document.getElementById("wallet-public-key").value.trim();
+        const privateKey = document.getElementById("wallet-private-key").value.trim();
+        const balance = "0.00000000";  // Solde par défaut
 
-    // Gestionnaires pour d'autres pages avec crypto/signature
-    if (document.getElementById('btn-hash') && document.getElementById('message-hash')) {
-        document.getElementById('btn-hash').addEventListener('click', Hashage);
-    }
+        // Validation des champs
+        if (!walletId || !publicKey || !privateKey) {
+            alert("Veuillez remplir tous les champs et générer des clés.");
+            return;
+        }
 
-    if (document.getElementById('btn-encrypt') && document.getElementById('message-crypt')) {
-        document.getElementById('btn-encrypt').addEventListener('click', encryptMessage);
-    }
+        // Créer l'objet FormData
+        const formData = new FormData();
+        formData.append("walletName", walletId);
+        formData.append("publicKey", publicKey);
+        formData.append("privateKey", privateKey);
+        formData.append("balance", balance);
 
-    if (document.getElementById('btn-decrypt') && document.getElementById('message-crypt')) {
-        document.getElementById('btn-decrypt').addEventListener('click', decryptMessage);
-    }
+        try {
+            const response = await fetch("../src/wallet-be.php", {
+                method: "POST",
+                body: formData  // Envoi des données sous forme de FormData
+            });
+
+            if (!response.ok) {
+                throw new Error("Une erreur est survenue lors de l'envoi des données");
+            }
+
+            const result = await response.json();
+            console.log(result);
+
+            if (result.success) {
+                alert("L'inscription a réussi");
+            } else {
+                alert("Erreur: " + result.message);
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'inscription :", error);
+            alert("L'inscription a échoué");
+        }
+    });
 });
 
-// Fonction pour copier dans le presse-papier
-function copyToClipboard(elementId) {
-    const element = document.getElementById(elementId);
-    element.select();
-    document.execCommand('copy');
+/* Code Wallet List & Mempool */
+let currentPage = 1;
+const rowsPerPage = 5;
 
-    // Indiquer visuellement que la copie a été effectuée
-    const originalText = element.parentElement.querySelector('.btn-copy').textContent;
-    element.parentElement.querySelector('.btn-copy').textContent = 'Copié !';
-    setTimeout(() => {
-        element.parentElement.querySelector('.btn-copy').textContent = originalText;
-    }, 1500);
-}
+// Fonction pour afficher le tableau avec la pagination
+function displayTable(page) {
+    let tbody = document.querySelector("#dataTable tbody");
+    tbody.innerHTML = ""; // Vider le corps du tableau avant de réinsérer les lignes
+    let start = (page - 1) * rowsPerPage;
+    let end = start + rowsPerPage;
+    let paginatedItems = window.walletTable.slice(start, end);
 
-// Vérifier si un wallet avec cet ID existe déjà
-function checkWalletId() {
-    const walletId = document.getElementById('wallet-id').value.trim();
-
-    if (walletId === '') {
-        return;
-    }
-
-    fetch(`../src/wallet-be.php?action=check_wallet&id=${encodeURIComponent(walletId)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.exists) {
-                // Charger les données du wallet existant
-                loadWalletData(walletId);
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-        });
-}
-
-// Charger les données d'un wallet existant
-function loadWalletData(walletId) {
-    fetch(`../src/wallet-be.php?action=get_wallet&id=${encodeURIComponent(walletId)}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Remplir le formulaire avec les données du wallet
-                document.getElementById('wallet-public-key').value = data.wallet.public_key;
-
-                // Effacer l'affichage des clés dans les éléments <pre> s'ils existent
-                if (document.getElementById('privateKey')) {
-                    document.getElementById('privateKey').textContent = "";
-                }
-                if (document.getElementById('publicKey')) {
-                    document.getElementById('publicKey').textContent = "";
-                }
-
-                document.getElementById('wallet-private-key').value = data.wallet.private_key;
-                document.getElementById('balance-amount').textContent = data.wallet.balance.toFixed(8);
-
-                showNotification('Wallet existant chargé', 'success');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showNotification('Erreur lors du chargement du wallet', 'error');
-        });
-}
-
-// Sauvegarder le wallet
-function saveWallet(event) {
-    event.preventDefault();
-
-    const walletId = document.getElementById('wallet-id').value.trim();
-    const publicKey = document.getElementById('wallet-public-key').value.trim();
-    const privateKey = document.getElementById('wallet-private-key').value.trim();
-    const balance = parseFloat(document.getElementById('balance-amount').textContent) || 0;
-
-    // Vérifier que toutes les informations nécessaires sont présentes
-    if (!walletId || !publicKey || !privateKey) {
-        showNotification('Veuillez remplir tous les champs et générer des clés', 'error');
-        return;
-    }
-
-    // Créer un objet FormData pour l'envoi
-    const formData = new FormData();
-    formData.append('id', walletId);
-    formData.append('public_key', publicKey);
-    formData.append('private_key', privateKey);
-    formData.append('balance', balance);
-
-    // Appel à l'API
-    fetch('../src/wallet-be.php?action=save_wallet', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification('Wallet sauvegardé avec succès', 'success');
-            } else {
-                showNotification(data.message || 'Erreur lors de la sauvegarde', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            showNotification('Erreur de connexion au serveur', 'error');
-        });
-}
-
-// Afficher une notification
-function showNotification(message, type) {
-    // Supprimer les notifications existantes
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => {
-        notification.remove();
-    });
-
-    // Créer une nouvelle notification
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-
-    // Ajouter la notification au document
-    document.body.appendChild(notification);
-
-    // Afficher la notification avec une animation
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
-
-    // Supprimer la notification après un délai
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
-}
-
-/* Code Mempool */
-/* A MODIFIER AVANT UTILISATION
-<script>
-    let currentPage = 1;
-    const rowsPerPage = 10;
-    
-    function displayTable(page) {
-        let tbody = document.querySelector("#dataTable tbody");
-        tbody.innerHTML = "";
-        let start = (page - 1) * rowsPerPage;
-        let end = start + rowsPerPage;
-        let paginatedItems = tableData.slice(start, end);
-
+    if (paginatedItems.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4'>Aucune donnée à afficher</td></tr>";
+    } else {
         paginatedItems.forEach(item => {
             let row = `<tr>
-                <td>${item.id}</td>
-                <td>${item.nom}</td>
-                <td>${item.prix}</td>
+                <td>${item.nom_wallet}</td>
+                <td>${item.publicKey_wallet}</td>
+                <td>${item.privateKey_wallet}</td>
+                <td>${item.amount_wallet} BTC</td>
             </tr>`;
             tbody.innerHTML += row;
         });
-
-        document.getElementById("pageInfo").textContent = `Page ${page} sur ${Math.ceil(tableData.length / rowsPerPage)}`;
-        document.getElementById("prevPage").disabled = page === 1;
-        document.getElementById("nextPage").disabled = end >= tableData.length;
     }
 
-    document.getElementById("prevPage").addEventListener("click", () => {
-        if (currentPage > 1) {
-            currentPage--;
-            displayTable(currentPage);
-        }
-    });
+    document.getElementById("pageInfo").textContent = `Page ${page} sur ${Math.ceil(window.walletTable.length / rowsPerPage)}`;
+    document.getElementById("prevPage").disabled = page === 1;
+    document.getElementById("nextPage").disabled = end >= window.walletTable.length;
+}
 
-    document.getElementById("nextPage").addEventListener("click", () => {
-        if (currentPage * rowsPerPage < tableData.length) {
-            currentPage++;
-            displayTable(currentPage);
-        }
-    });
+// Gestion du bouton "Précédent"
+document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayTable(currentPage);
+    }
+});
 
-    displayTable(currentPage);
-</script>
-*/
+// Gestion du bouton "Suivant"
+document.getElementById("nextPage").addEventListener("click", () => {
+    if (currentPage * rowsPerPage < window.walletTable.length) {
+        currentPage++;
+        displayTable(currentPage);
+    }
+});
