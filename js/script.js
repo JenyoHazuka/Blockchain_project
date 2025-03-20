@@ -1,3 +1,4 @@
+/* Code Hash & Cryptage */
 let publicKey, privateKey, signedMessage;
 let encoder = new TextEncoder();
 let decoder = new TextDecoder();
@@ -251,4 +252,28 @@ document.getElementById("nextPage").addEventListener("click", () => {
         currentPage++;
         displayTable(currentPage);
     }
+});
+
+/* Code Transaction */
+document.addEventListener("DOMContentLoaded", function () {
+    function loadWallets() {
+        fetch("../src/transaction-be.php?action=get_wallets")
+            .then(response => response.json())
+            .then(data => {
+                const senderSelect = document.getElementById("sender");
+                const receiverSelect = document.getElementById("receiver");
+
+                senderSelect.innerHTML = "";
+                receiverSelect.innerHTML = "";
+
+                data.forEach(wallet => {
+                    let option = `<option value="${wallet.id_wallet}">${wallet.nom_wallet} (${wallet.amount_wallet} BTC)</option>`;
+                    senderSelect.innerHTML += option;
+                    receiverSelect.innerHTML += option;
+                });
+            })
+            .catch(error => console.error("Erreur lors du chargement des wallets :", error));
+    }
+
+    loadWallets();
 });

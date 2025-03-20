@@ -18,7 +18,9 @@
             <li><a href="pages/list-wallet.php">Listes Wallets</a></li>
             <li><a href="pages/transaction.php">Transaction</a></li>
             <li><a href="pages/mempool.php">Mempool</a></li>
+            <li><a href="pages/mining.php">Mining</a></li>
             <li><a href="pages/block.php">Block</a></li>
+            <li><a href="pages/cours.php">Cours</a></li>
         </ul>
     </nav>
 </header>

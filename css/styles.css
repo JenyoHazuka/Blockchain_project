@@ -297,6 +297,8 @@ input[readonly] {
     width: 80%;
     margin: 20px auto;
     border-collapse: collapse;
+    border-color: black;
+    border: solid 2px black;
     background-color: #fff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -311,13 +313,27 @@ input[readonly] {
     padding: 12px 15px;
     text-align: left;
     font-weight: bold;
+    border-color: black;
+    border: solid 2px black;
 }
 
 /* Style des cellules du tableau */
 .listTable td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    border-color: black;
+    border: solid 2px black;
+    padding: 10px;
+}
+
+.listTable th:nth-child(2),
+.listTable th:nth-child(3),
+.listTable td:nth-child(2),
+.listTable td:nth-child(3) {
+    min-width: 500px;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Style du survol des lignes */
