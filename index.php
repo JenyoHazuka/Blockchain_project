@@ -10,7 +10,7 @@
 </head>
 <body>
 <header>
-    <h1>Accueil Projet Blockchain</h1>
+    <h1>Projet Blockchain</h1>
     <nav>
         <ul>
             <li><a href="pages/hash-cryptage.php">Hashage et Cryptage</a></li>
@@ -25,5 +25,53 @@
     </nav>
 </header>
 <main>
+    <h1>Site pour tester le fonctionnement d'une Blockchain</h1>
+    <h3 styles="margin-top: 20px">Sélection d'un module : </h3>
+    <section class="cards-container">
+        <div class="card">
+            <a href="pages/hash-cryptage.php" class="card-link">
+                <h2 class="card-title">1. Hashage et Chiffrage</h2>
+            </a>
+        </div>
+        <div class="card">
+            <a href="pages/wallet.php" class="card-link">
+                <h2 class="card-title">2. Créer un Wallet</h2>
+            </a>
+        </div>
+        <div class="card">
+            <a href="pages/list-wallet.php" class="card-link">
+                <h2 class="card-title">3. Liste des wallets</h2>
+            </a>
+        </div>
+    </section>
+    <section class="cards-container">
+        <div class="card">
+            <a href="pages/transaction.php" class="card-link">
+                <h2 class="card-title">4. Faire une transaction</h2>
+            </a>
+        </div>
+        <div class="card">
+            <a href="pages/mempool.php" class="card-link">
+                <h2 class="card-title">5. Mempool des transactions</h2>
+            </a>
+        </div>
+        <div class="card">
+            <a href="pages/mining.php" class="card-link">
+                <h2 class="card-title">6. Miner un bloc</h2>
+            </a>
+        </div>
+    </section>
+    <section class="cards-container">
+        <div class="card">
+            <a href="pages/block.php" class="card-link">
+                <h2 class="card-title">7. Liste des blocs</h2>
+            </a>
+        </div>
+        <div class="card">
+            <a href="pages/cours.php" class="card-link">
+                <h2 class="card-title">8. Cours de Blockchain</h2>
+            </a>
+        </div>
+    </section>
 </main>
 <?php include 'include/footer.php'; ?>

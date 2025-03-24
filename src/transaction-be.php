@@ -1,11 +1,17 @@
 <?php
-require_once ('connexion.php');
+require_once("connexion.php");
 
-if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET['action']) && $_GET['action'] === "get_wallets") {
-    $stmt = $pdo->query("SELECT id_wallet, nom_wallet, amount_wallet FROM wallets WHERE amount_wallet > 0");
-    echo json_encode($stmt->fetchAll());
-    exit;
+// Effectuer la requête pour récupérer les données des wallets
+$stmt = $pdo->query("SELECT id_wallet, nom_wallet, amount_wallet FROM wallets;");
+$walletOpt = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Si aucun résultat, retourner un tableau vide
+if (!$walletOpt) {
+    $walletOpt = [];
 }
+
+// Convertir les données en JSON pour être utilisées côté client
+echo json_encode($walletOpt, JSON_PRETTY_PRINT);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sender = $_POST['sender'];

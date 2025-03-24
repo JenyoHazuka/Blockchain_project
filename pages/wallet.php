@@ -1,5 +1,6 @@
 <?php include '../include/header.php'; ?>
 
+<main>
 <div class="container">
     <h2>Inscription Wallet</h2>
     <button id="generate-keys">Générer les clés</button>
@@ -31,5 +32,6 @@
         </div>
     </form>
 </div>
+</main>
 
 <?php include '../include/footer.php'; ?>

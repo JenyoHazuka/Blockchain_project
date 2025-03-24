@@ -208,15 +208,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 /* Code Wallet List & Mempool */
-let currentPage = 1;
-const rowsPerPage = 5;
+let currentPageWallet = 1;
+const rowsPerPageWallet = 5;
 
 // Fonction pour afficher le tableau avec la pagination
-function displayTable(page) {
-    let tbody = document.querySelector("#dataTable tbody");
+function displayTableWallet(pageWallet) {
+    let tbody = document.querySelector("#dataTableWallets tbody");
     tbody.innerHTML = ""; // Vider le corps du tableau avant de réinsérer les lignes
-    let start = (page - 1) * rowsPerPage;
-    let end = start + rowsPerPage;
+    let start = (pageWallet - 1) * rowsPerPageWallet;
+    let end = start + rowsPerPageWallet;
     let paginatedItems = window.walletTable.slice(start, end);
 
     if (paginatedItems.length === 0) {
@@ -233,41 +233,46 @@ function displayTable(page) {
         });
     }
 
-    document.getElementById("pageInfo").textContent = `Page ${page} sur ${Math.ceil(window.walletTable.length / rowsPerPage)}`;
-    document.getElementById("prevPage").disabled = page === 1;
-    document.getElementById("nextPage").disabled = end >= window.walletTable.length;
+    document.getElementById("pageInfoWallet").textContent = `Page ${page} sur ${Math.ceil(window.walletTable.length / rowsPerPageWallet)}`;
+    document.getElementById("prevPageWallet").disabled = page === 1;
+    document.getElementById("nextPageWallet").disabled = end >= window.walletTable.length;
 }
 
 // Gestion du bouton "Précédent"
 document.getElementById("prevPage").addEventListener("click", () => {
-    if (currentPage > 1) {
-        currentPage--;
-        displayTable(currentPage);
+    if (currentPageWallet > 1) {
+        currentPageWallet--;
+        displayTableWallet(currentPageWallet);
     }
 });
 
 // Gestion du bouton "Suivant"
 document.getElementById("nextPage").addEventListener("click", () => {
-    if (currentPage * rowsPerPage < window.walletTable.length) {
-        currentPage++;
-        displayTable(currentPage);
+    if (currentPageWallet * rowsPerPageWallet < window.walletTable.length) {
+        currentPageWallet++;
+        displayTableWallet(currentPageWallet);
     }
 });
 
 /* Code Transaction */
 document.addEventListener("DOMContentLoaded", function () {
     function loadWallets() {
-        fetch("../src/transaction-be.php?action=get_wallets")
-            .then(response => response.json())
+        fetch("../src/transaction-be.php")
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur réseau !");
+                return response.json();
+            })
             .then(data => {
                 const senderSelect = document.getElementById("sender");
                 const receiverSelect = document.getElementById("receiver");
 
-                senderSelect.innerHTML = "";
-                receiverSelect.innerHTML = "";
+                senderSelect.innerHTML = '<option value="">Choisir un wallet</option>';
+                receiverSelect.innerHTML = '<option value="">Choisir un wallet</option>';
 
                 data.forEach(wallet => {
-                    let option = `<option value="${wallet.id_wallet}">${wallet.nom_wallet} (${wallet.amount_wallet} BTC)</option>`;
+                    let option = `<option value="${wallet.id_wallet}">
+                        ${wallet.nom_wallet} (${wallet.amount_wallet} BTC)
+                    </option>`;
                     senderSelect.innerHTML += option;
                     receiverSelect.innerHTML += option;
                 });
@@ -276,4 +281,66 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     loadWallets();
+});
+
+/* Code Mining */
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("load_data_mining.php")
+        .then(response => response.json())
+        .then(data => {
+            let walletSelect = document.getElementById("wallet");
+            data.wallets.forEach(wallet => {
+                let option = document.createElement("option");
+                option.value = wallet.nom_wallet;
+                option.textContent = wallet.nom_wallet;
+                walletSelect.appendChild(option);
+            });
+
+            let transactionsTable = document.getElementById("transactionsTable");
+            data.transactions.forEach(tx => {
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td><input type="checkbox" value="${tx.id_transaction}"></td>
+                    <td>${tx.id_transaction}</td>
+                    <td>${tx.expediteur_transaction}</td>
+                    <td>${tx.destinataire_transaction}</td>
+                    <td>${tx.montant_transaction}</td>
+                    <td>${tx.frais_transaction}</td>
+                `;
+                transactionsTable.appendChild(row);
+            });
+
+            document.getElementById("hash_prec").value = data.hash_prec;
+        });
+
+    document.getElementById("mineBlock").addEventListener("click", function () {
+        let selectedTx = [...document.querySelectorAll("#transactionsTable input:checked")].map(input => input.value);
+        if (selectedTx.length === 0) {
+            alert("Sélectionnez au moins une transaction.");
+            return;
+        }
+
+        let blockData = {
+            wallet: document.getElementById("wallet").value,
+            hash_prec: document.getElementById("hash_prec").value,
+            version: document.getElementById("version").value,
+            target: parseInt(document.getElementById("target").value),
+            transactions: selectedTx
+        };
+
+        fetch("mine_block.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(blockData)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert("Block miné avec succès !");
+                    location.reload();
+                } else {
+                    alert("Erreur lors du minage.");
+                }
+            });
+    });
 });
