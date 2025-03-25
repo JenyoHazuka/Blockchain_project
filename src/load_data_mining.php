@@ -1,10 +1,11 @@
 <?php
-include 'src/connexion.php';
+require_once('connexion.php');
 
 $wallets = $pdo->query("SELECT nom_wallet FROM wallets")->fetchAll(PDO::FETCH_ASSOC);
 $transactions = $pdo->query("
     SELECT id_transaction, expediteur_transaction, destinataire_transaction, montant_transaction, frais_transaction 
-    FROM transactions 
+    FROM transactions
+    WHERE statut = 'En Attente' 
     ORDER BY frais_transaction DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 

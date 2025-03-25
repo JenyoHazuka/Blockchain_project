@@ -207,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-/* Code Wallet List & Mempool */
+/* Code Wallet List */
 let currentPageWallet = 1;
 const rowsPerPageWallet = 5;
 
@@ -239,7 +239,7 @@ function displayTableWallet(pageWallet) {
 }
 
 // Gestion du bouton "Précédent"
-document.getElementById("prevPage").addEventListener("click", () => {
+document.getElementById("prevPageWallet").addEventListener("click", () => {
     if (currentPageWallet > 1) {
         currentPageWallet--;
         displayTableWallet(currentPageWallet);
@@ -247,100 +247,56 @@ document.getElementById("prevPage").addEventListener("click", () => {
 });
 
 // Gestion du bouton "Suivant"
-document.getElementById("nextPage").addEventListener("click", () => {
+document.getElementById("nextPageWallet").addEventListener("click", () => {
     if (currentPageWallet * rowsPerPageWallet < window.walletTable.length) {
         currentPageWallet++;
         displayTableWallet(currentPageWallet);
     }
 });
 
-/* Code Transaction */
-document.addEventListener("DOMContentLoaded", function () {
-    function loadWallets() {
-        fetch("../src/transaction-be.php")
-            .then(response => {
-                if (!response.ok) throw new Error("Erreur réseau !");
-                return response.json();
-            })
-            .then(data => {
-                const senderSelect = document.getElementById("sender");
-                const receiverSelect = document.getElementById("receiver");
+/* Code Mempool */
+let currentPageMempool = 1;
+const rowsPerPageMempool = 5;
 
-                senderSelect.innerHTML = '<option value="">Choisir un wallet</option>';
-                receiverSelect.innerHTML = '<option value="">Choisir un wallet</option>';
+// Fonction pour afficher le tableau avec la pagination
+function displayTableMempool(pageMempool) {
+    let tbody = document.querySelector("#dataTableMempools tbody");
+    tbody.innerHTML = ""; // Vider le corps du tableau avant de réinsérer les lignes
+    let start = (pageMempool - 1) * rowsPerPageMempool;
+    let end = start + rowsPerPageMempool;
+    let paginatedItems = window.mempoolTable.slice(start, end);
 
-                data.forEach(wallet => {
-                    let option = `<option value="${wallet.id_wallet}">
-                        ${wallet.nom_wallet} (${wallet.amount_wallet} BTC)
-                    </option>`;
-                    senderSelect.innerHTML += option;
-                    receiverSelect.innerHTML += option;
-                });
-            })
-            .catch(error => console.error("Erreur lors du chargement des wallets :", error));
+    if (paginatedItems.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4'>Aucune donnée à afficher</td></tr>";
+    } else {
+        paginatedItems.forEach(tx => {
+            let row = `<tr>
+                <td>${tx.expediteur_transaction}</td>
+                <td>${tx.destinataire_transaction}</td>
+                <td>${tx.montant_transaction} BTC</td>
+                <td>${tx.frais_transaction}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
     }
 
-    loadWallets();
+    document.getElementById("pageInfoMempool").textContent = `Page ${page} sur ${Math.ceil(window.mempoolTable.length / rowsPerPageMempool)}`;
+    document.getElementById("prevPageMempool").disabled = page === 1;
+    document.getElementById("nextPageMempool").disabled = end >= window.mempoolTable.length;
+}
+
+// Gestion du bouton "Précédent"
+document.getElementById("prevPageMempool").addEventListener("click", () => {
+    if (currentPageMempool > 1) {
+        currentPageMempool--;
+        displayTableMempool(currentPageMempool);
+    }
 });
 
-/* Code Mining */
-document.addEventListener("DOMContentLoaded", function () {
-    fetch("load_data_mining.php")
-        .then(response => response.json())
-        .then(data => {
-            let walletSelect = document.getElementById("wallet");
-            data.wallets.forEach(wallet => {
-                let option = document.createElement("option");
-                option.value = wallet.nom_wallet;
-                option.textContent = wallet.nom_wallet;
-                walletSelect.appendChild(option);
-            });
-
-            let transactionsTable = document.getElementById("transactionsTable");
-            data.transactions.forEach(tx => {
-                let row = document.createElement("tr");
-                row.innerHTML = `
-                    <td><input type="checkbox" value="${tx.id_transaction}"></td>
-                    <td>${tx.id_transaction}</td>
-                    <td>${tx.expediteur_transaction}</td>
-                    <td>${tx.destinataire_transaction}</td>
-                    <td>${tx.montant_transaction}</td>
-                    <td>${tx.frais_transaction}</td>
-                `;
-                transactionsTable.appendChild(row);
-            });
-
-            document.getElementById("hash_prec").value = data.hash_prec;
-        });
-
-    document.getElementById("mineBlock").addEventListener("click", function () {
-        let selectedTx = [...document.querySelectorAll("#transactionsTable input:checked")].map(input => input.value);
-        if (selectedTx.length === 0) {
-            alert("Sélectionnez au moins une transaction.");
-            return;
-        }
-
-        let blockData = {
-            wallet: document.getElementById("wallet").value,
-            hash_prec: document.getElementById("hash_prec").value,
-            version: document.getElementById("version").value,
-            target: parseInt(document.getElementById("target").value),
-            transactions: selectedTx
-        };
-
-        fetch("mine_block.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(blockData)
-        })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert("Block miné avec succès !");
-                    location.reload();
-                } else {
-                    alert("Erreur lors du minage.");
-                }
-            });
-    });
+// Gestion du bouton "Suivant"
+document.getElementById("nextPageMempool").addEventListener("click", () => {
+    if (currentPageMempool * rowsPerPageMempool < window.mempoolTable.length) {
+        currentPageMempool++;
+        displayTableMempool(currentPageMempool);
+    }
 });

@@ -35,6 +35,7 @@
     .then(walletTable => {
         // Passer les données dans le script JavaScript
         window.walletTable = walletTable; // Sauvegarder dans une variable globale
+        console.log(window.walletTable);
         displayTableWallet(1); // Afficher la première page de résultats
     })
     .catch(error => {

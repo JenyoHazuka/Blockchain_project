@@ -17,7 +17,6 @@
             <li><a href="pages/wallet.php">Wallet</a></li>
             <li><a href="pages/list-wallet.php">Listes Wallets</a></li>
             <li><a href="pages/transaction.php">Transaction</a></li>
-            <li><a href="pages/mempool.php">Mempool</a></li>
             <li><a href="pages/mining.php">Mining</a></li>
             <li><a href="pages/block.php">Block</a></li>
             <li><a href="pages/cours.php">Cours</a></li>
@@ -43,25 +42,18 @@
                 <h2 class="card-title">3. Liste des wallets</h2>
             </a>
         </div>
-    </section>
-    <section class="cards-container">
         <div class="card">
             <a href="pages/transaction.php" class="card-link">
                 <h2 class="card-title">4. Faire une transaction</h2>
             </a>
         </div>
-        <div class="card">
-            <a href="pages/mempool.php" class="card-link">
-                <h2 class="card-title">5. Mempool des transactions</h2>
-            </a>
-        </div>
+    </section>
+    <section class="cards-container">
         <div class="card">
             <a href="pages/mining.php" class="card-link">
                 <h2 class="card-title">6. Miner un bloc</h2>
             </a>
         </div>
-    </section>
-    <section class="cards-container">
         <div class="card">
             <a href="pages/block.php" class="card-link">
                 <h2 class="card-title">7. Liste des blocs</h2>
