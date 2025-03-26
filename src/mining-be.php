@@ -49,12 +49,8 @@ $stmt = $pdo->prepare("
 $success = $stmt->execute([$hash_block, $hash_prec, $version, $target, $nonce, $merkle_root]);
 
 if ($success) {
-    // Récompense du bloc génésis ou classique
-    if ($hash_prec === str_repeat('0', 64)) {
-        // Bloc génésis : pas de transactions, on ajoute la récompense au wallet
-        $stmt = $pdo->prepare("UPDATE wallets SET amount_wallet = amount_wallet + ? WHERE nom_wallet = ?");
-        $stmt->execute([$reward, $wallet]);
-    }
+    $stmt = $pdo->prepare("UPDATE wallets SET amount_wallet = amount_wallet + ? WHERE nom_wallet = ?");
+    $stmt->execute([$reward, $wallet]);
 
     echo json_encode(["success" => true, "message" => "Block ajouté en base de données avec succès"]);
 } else {
