@@ -51,12 +51,12 @@
     <section class="cards-container">
         <div class="card">
             <a href="pages/mining.php" class="card-link">
-                <h2 class="card-title">6. Miner un bloc</h2>
+                <h2 class="card-title">6. Minage de bloc</h2>
             </a>
         </div>
         <div class="card">
             <a href="pages/block.php" class="card-link">
-                <h2 class="card-title">7. Liste des blocs</h2>
+                <h2 class="card-title">7. Recherche de blocs</h2>
             </a>
         </div>
         <div class="card">

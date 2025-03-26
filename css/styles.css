@@ -1,21 +1,44 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
     display: flex;
-    /* Utiliser Flexbox pour aligner le contenu */
     flex-direction: column;
-    /* Disposer les éléments en colonne */
     min-height: 100vh;
-    /* Forcer le body à prendre au moins 100% de la hauteur de la fenêtre */
+    padding: 0;
+    margin: 0;
 }
 
+/* Contenu principal */
 main {
     padding: 20px;
     flex: 1;
-    /* Cette propriété prend tout l'espace restant pour pousser le footer en bas */
+}
+
+header {
+    background-color: #003366;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+h2 {
+    text-align: center;
+    font-size: 28px;
+    color: #003366;
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: normal;
+    color: #666;
 }
 
 .link-home {
@@ -26,17 +49,6 @@ main {
 .link-home a:hover {
     text-decoration: none;
     color: grey;
-}
-
-header {
-    background-color: #007bff;
-    color: white;
-    padding: 20px;
-}
-
-h1 {
-    margin: 0;
-    font-size: 24px;
 }
 
 nav {
@@ -73,19 +85,23 @@ nav ul li a:hover {
     padding: 20px 0;
 }
 
-/* Pied de page */
+/* Footer */
 footer {
-    background-color: #007bff;
+    background-color: #003366;
     color: white;
     text-align: center;
     padding: 10px;
-    width: 100%;
-    /* Enlever la position absolue */
 }
 
 /* Styles spécifiques pour la page Hashage et Cryptage */
 .container {
     padding: 20px;
+}
+
+.container-formulaire {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 textarea {
@@ -138,38 +154,68 @@ pre {
 }
 
 /* Formulaire */
-.wallet-form {
-    margin-top: 20px;
+#walletForm {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+/* Groupes de formulaire */
 .form-group {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-label {
+/* Bouton pour générer les clés */
+#generate-keys {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
     display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
+    margin: 0 auto 20px auto;
+    transition: background-color 0.3s;
 }
 
+#generate-keys:hover {
+    background-color: #0056b3;
+}
+
+/* Labels des champs de formulaire */
+label {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Champs de saisie */
 input {
-    width: 100%;
     padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 1rem;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    width: 100%;
     box-sizing: border-box;
+    transition: border 0.3s, box-shadow 0.3s;
 }
 
+/* Effet au focus des champs de saisie */
 input:focus {
-    border-color: var(--primary-color);
+    border-color: #007bff;
     outline: none;
-    box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.2);
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
+/* Pour les champs readonly */
 input[readonly] {
-    background-color: #f5f5f5;
-    cursor: default;
+    background-color: #e9ecef;
+    cursor: not-allowed;
 }
 
 .key-container {
@@ -185,23 +231,36 @@ input[readonly] {
 }
 
 .btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    border: none;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
+    background-color: #007bff;
     color: white;
-    background-color: #727272;
+    transition: background-color 0.3s;
 }
 
 .btn-primary:hover {
-    background-color: #e78200;
+    background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+    background-color: #b0d0f0;
+    cursor: not-allowed;
+}
+
+/* Espacement entre les champs */
+input+span {
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 5px;
+    display: block;
 }
 
 .btn-secondary {
@@ -226,13 +285,23 @@ input[readonly] {
     background-color: #5a6268;
 }
 
+/* Action des boutons */
 .form-actions {
-    margin-top: 30px;
     text-align: center;
 }
 
 .form-actions .btn {
     min-width: 200px;
+}
+
+.formulaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid #000;
+    border-radius: 10px;
+    padding: 20px 30px;
+    width: max-content;
 }
 
 /* Solde */
@@ -249,6 +318,12 @@ input[readonly] {
     font-weight: bold;
     color: var(--primary-color);
     margin: 10px 0;
+}
+
+#paginationWallet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Message de notification */
@@ -280,7 +355,7 @@ input[readonly] {
     background-color: #dc3545;
 }
 
-/* Code Wallet List & Mempool */
+/* Code Wallet List */
 
 /* Wrapper du tableau */
 .listTable-wrapper {
@@ -375,40 +450,211 @@ input[readonly] {
 }
 
 /* Code Accueil */
+/* Section des cartes */
 .cards-container {
     display: flex;
     justify-content: space-evenly;
     gap: 20px;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .card {
     background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 200px;
     height: 200px;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
     margin: 20px;
 }
 
 .card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card-title {
     font-size: 1.5rem;
-    color: #007bff;
+    color: #003366;
+    text-align: center;
     text-decoration: none;
 }
 
 .card-link {
     text-decoration: none;
     color: inherit;
+}
+
+/* Code Blocks */
+.title-block {
+    margin-bottom: 50px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.search-container input {
+    width: 500px;
+    padding: 5px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin: 0 30px;
+}
+
+.search-bar {
+    padding: 10px;
+    font-size: 14px;
+    width: 48%;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.list-Blocks {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.block {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 10px;
+    margin: 10px;
+    width: min-content;
+}
+
+.block-num {
+    display: flex;
+    justify-content: center;
+}
+
+.block-hash,
+.block-hash-prec,
+.block-version,
+.block-target,
+.block-nonce,
+.block-merkle-root,
+.block-timestamps {
+    padding: 10px 0;
+}
+
+/* Code Transaction */
+.formTransaction {
+    display: grid;
+}
+
+.form-group-tx {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
+
+#miningForm {
+    display: grid;
+    width: 580px;
+}
+
+.selection {
+    font-size: large;
+    padding: 5px;
+}
+
+/* Wrapper du tableau */
+.listTableTx-wrapper {
+    width: 100%;
+    /* Le tableau prend toute la largeur de l'écran */
+    max-width: 100%;
+    /* Il ne dépassera pas la largeur de l'écran */
+    overflow: hidden;
+    /* Pas de défilement */
+}
+
+/* Style du tableau avec la classe .listTableTx */
+.listTableTx {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    border-color: black;
+    border: solid 2px black;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des en-têtes de colonne */
+.listTableTx thead {
+    background-color: #007bff;
+    color: white;
+}
+
+.listTableTx th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: bold;
+    border-color: black;
+    border: solid 2px black;
+}
+
+/* Style des cellules du tableau */
+.listTableTx td {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
+    border-color: black;
+    border: solid 2px black;
+    padding: 10px;
+}
+
+/* Style du survol des lignes */
+.listTableTx td:hover {
+    background-color: #f1f1f1;
+}
+
+.pdf {
+    display: flex;
+    justify-content: center;
+}
+
+/* Hash crypt */
+
+.container-formulaire-hashCrypt {
+    padding: 20px;
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+}
+
+.div-scrypt {
+    display: grid;
+    justify-items: stretch;
+}
+
+.message-crypts,
+.button-crypts,
+.message-hasher,
+.button-hash {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-keys {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.title {
+    padding-bottom: 20px;
 }

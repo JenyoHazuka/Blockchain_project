@@ -22,7 +22,7 @@ foreach ($transactions as $tx_id) {
     $tx = $tx_data->fetch(PDO::FETCH_ASSOC);
     // Modification de la transaction dans la BDD
     $stmt = $pdo->prepare("UPDATE transactions SET statut = 'Terminer' WHERE id_transaction = ?");
-    $stmt->execute([$tx]);
+    $stmt->execute([$tx_id]);
     if ($tx) {
         $tx_string = implode("|", $tx);
         $tx_hashes[] = hash("sha256", $tx_string);

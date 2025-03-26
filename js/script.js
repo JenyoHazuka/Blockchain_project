@@ -300,3 +300,6 @@ document.getElementById("nextPageMempool").addEventListener("click", () => {
         displayTableMempool(currentPageMempool);
     }
 });
+
+/* Code SearchBar */
+

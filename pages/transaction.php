@@ -1,26 +1,38 @@
 <?php include '../include/header.php'; ?>
 <main>
-<div class="container">
-    <h2>Effectuer une transaction</h2>
-    <form action="../src/transaction-be.php" method="POST" class="formTransaction">
-        <label for="sender">De :</label>
-        <select id="sender" name="sender" required>
-            <option value="Choisir un wallet"></option>
-        </select>
-        
-        <label for="receiver">Vers :</label>
-        <select id="receiver" name="receiver" required>
-            <option value="Choisir un wallet"></option>
-        </select>
+<div class="container-formulaire">
+    <div class="formulaire">
+        <h2>Effectuer une transaction</h2>
+        <form action="../src/transaction-be.php" method="POST" class="formTransaction">
+            <div class="form-group-tx">
+                <label for="sender">De :</label>
+                <select id="sender" name="sender" class="selection" required>
+                    <option value="Choisir un wallet"></option>
+                </select>
+            </div>
+            
+            <div class="form-group-tx">
+            <label for="receiver">Vers :</label>
+                <select id="receiver" name="receiver" class="selection" required>
+                    <option value="Choisir un wallet"></option>
+                </select>
+            </div>
 
-        <label for="amount">Montant :</label>
-        <input type="number" step="0.00000001" id="amount" name="amount" value="0.00000001" min="0.00000001" required>
-        
-        <label for="fees">Frais de transaction :</label>
-        <input type="number" step="0.00000001" id="fees" name="fees" value="0.00000001" min="0.00000001" required>
-        
-        <button type="submit">Envoyer</button>
-    </form>
+            <div class="form-group-tx">
+            <label for="amount">Montant :</label>
+            <input type="number" step="0.00000001" id="amount" name="amount" value="0.00000001" min="0.00000001" required>
+            </div>
+            
+            <div class="form-group-tx">
+                <label for="fees">Frais de transaction :</label>
+                <input type="number" step="0.00000001" id="fees" name="fees" value="0.00000001" min="0.00000001" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit">Envoyer</button>
+            </div>
+        </form>
+    </div>
 </div>
 </main>
 <script>

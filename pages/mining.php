@@ -1,35 +1,54 @@
 <?php include '../include/header.php'; ?>
 <main>
+<div class="container-formulaire">
+    <div class="formulaire">
+        <h1>Mining de block</h1>
+
+        <form id="miningForm">
+            <div class="form-group-tx">
+                <label for="wallet">Choisir un wallet :</label>
+                <select id="wallet" name="wallet" class="selection"></select>
+            </div>
+
+            <div class="form-group-tx">
+                <label for="hash_prec">Hash précédent :</label>
+                <input type="text" id="hash_prec" name="hash_prec" readonly>
+            </div>
+
+            <div class="form-group-tx">
+                <label for="version">Version :</label>
+                <input type="text" id="version" name="version" value="1.0">
+            </div>
+
+            <div class="form-group-tx">
+                <label for="target">Difficulté (Bits) :</label>
+                <input type="number" id="target" name="target" value="2">
+            </div>
+                
+            <div class="form-group-tx">
+                <label for="reward">Récompense de block :</label>
+                <input type="number" id="reward" name="reward" value="6.25">
+            </div>
+                
+            <div class="form-group-tx">
+                <label for="nonce">Nonce :</label>
+                <input type="number" id="nonce" name="nonce" value="0" readonly>
+            </div>
+            
+            <div class="form-group-tx">
+                <label for="merkle_root">Merkle Root :</label>
+                <input type="text" id="merkle_root" name="merkle_root" readonly>
+            </div>
+                
+            <div class="form-actions">
+                <button type="button" id="mineBlock">Miner le block</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="container">
-    <h1>Mining de block</h1>
-
-    <form id="miningForm">
-        <label for="wallet">Choisir un wallet :</label>
-        <select id="wallet" name="wallet"></select>
-
-        <label for="hash_prec">Hash précédent :</label>
-        <input type="text" id="hash_prec" name="hash_prec" readonly>
-
-        <label for="version">Version :</label>
-        <input type="text" id="version" name="version" value="1.0">
-
-        <label for="target">Difficulté (Bits) :</label>
-        <input type="number" id="target" name="target" value="2">
-
-        <label for="reward">Récompense de block :</label>
-        <input type="number" id="reward" name="reward" value="6.25">
-
-        <label for="nonce">Nonce :</label>
-        <input type="number" id="nonce" name="nonce" value="0" readonly>
-
-        <label for="merkle_root">Merkle Root :</label>
-        <input type="text" id="merkle_root" name="merkle_root" readonly>
-
-        <button type="button" id="mineBlock">Miner le block</button>
-    </form>
-
     <h2>Transactions en attente</h2>
-    <table class="listTable">
+    <table class="listTableTx">
         <thead>
             <tr>
                 <th>Sélection</th>
