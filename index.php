@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/forge/0.10.0/forge.min.js"></script>
     <script src="js/script.js"></script>
-    <title>Projet Blockchain</title>
+    <title>Tuto Blockchain</title>
 </head>
 <body>
 <header>
-    <h1>Projet Blockchain</h1>
+    <h1>Tuto Blockchain</h1>
     <nav>
         <ul>
             <li><a href="pages/hash-cryptage.php">Hashage et Cryptage</a></li>
